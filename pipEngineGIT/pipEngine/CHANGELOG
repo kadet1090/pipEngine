@@ -1,0 +1,32 @@
+Rev 6 - 29.12.2012 (szx):
+ - Lisp polishing,
+ - ZOMGH SHADERS,
+ - Texture manager moved from 'Sprite' class to 'Texture' class.
+ 
+Rev 5 (szx):
+ - I find out, that Lua sucks.
+ - First revision of my unnamed Lisp-like scripting language. It's buggy desecration!
+ - Beginning of Boehm GC integration (no, no smart pointers - it's pr0gramming),
+ - Exceptions and 'String' class (just std::string),
+ - Hmm, changes in renderer? I don't remember.
+
+Rev 4 (szx):
+ - OMG WE HAVE SOME LUA INTEGRATION!!11!oneone!21,
+ - Font support thanks to OGLFT,
+ - Some minor refactoring.
+ 
+Rev 3 (szx):
+ - 'Sprite' class (yay),
+ - 'Engine' and 'Property' classes are obsolete,
+ - Some 'Texture' class hijackng.
+  
+Rev 2 (szx):
+ - 'Color' and 'Engine' classes,
+ - 'Engine' class is broken - wait for fix,
+ - 'begin' and 'end' methodes in 'BaseRenderer' class,
+ - OpenGL renderer supports GLee,
+ - Added Render To Texture,
+ - 'Rectangle' and 'Vector2D' class got MACRO POWERUP (TM).
+
+Rev 1 (szx):
+ - Lost in action.
