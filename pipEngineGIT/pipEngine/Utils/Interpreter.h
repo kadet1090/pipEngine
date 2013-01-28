@@ -182,6 +182,7 @@ namespace pip
 		}
 		return result;
 	}
+
 	Atom* subProc(Env* env, Atom* rest)
 	{
 		Number *result = new Number(number(0.0));

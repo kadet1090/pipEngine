@@ -11,7 +11,7 @@ namespace pip
 	{
 		double x,y;
 
-		Vector2D() { x = y = 0;}
+		Vector2D() { x = y = 0; }
 
 		Vector2D(double x, double y)
 		{

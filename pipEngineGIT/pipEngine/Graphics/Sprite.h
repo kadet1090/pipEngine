@@ -5,97 +5,88 @@
 #include "Texture.h"
 #include "Shader.h"
 #include "../Utils/GC.h"
+#include "../Utils/Property.h"
 
 namespace pip
-{
+{		
     class Sprite; // Yay, crazy forward declarations.
 	const Rectangle& getRectangle(const Sprite &sprite); //TODO Fuck out?
 
     // General Purpose Highly Functional PipEngine Sprite Class (GPHFPSC).
 	class Sprite : public GCed
 	{
-	public:
-		friend const Rectangle& getRectangle(const Sprite&);
+	    public:
+		    friend const Rectangle& getRectangle(const Sprite&);
 
-		// Constructor.
-		Sprite(const string &name, Renderer *renderer, Shader *shader = 0);
-		// Destructor.
-		~Sprite();
-		// Loading our fantastic, beautiful graphic.
-		void load(const string &name, const string &animation = "idle");
-		// Clears our sprite;
-		void clear();
-		// Some pixel transformations - you know, ideal can be you can always improved!
-		void setPixel(const Vector2D &position, const Color &color, unsigned int renderedFrame = 0, const string &animation = "idle");
-		// Bring our marvelous sprite in front of player's eyes.
-		void render();
-		// Tell ours sprite to contemplate about sense of life, social role and its current animation's frame.
-		void update(double dt);
+		    // Constructor.
+		    Sprite(const string &name, Renderer *renderer, Shader *shader = 0);
+		    // Destructor.
+		    ~Sprite();
+		    // Loading our fantastic, beautiful graphic.
+		    void load(const string &name, const string &animation = "idle");
+		    // Clears our sprite;
+		    void clear();
+		    // Some pixel transformations - you know, ideal can be you can always improved!
+		    void setPixel(const Vector2D &position, const Color &color, unsigned int renderedFrame = 0, const string &animation = "idle");
+		    // Bring our marvelous sprite in front of player's eyes.
+		    void render();
+		    // Tell ours sprite to contemplate about sense of life, social role and its current animation's frame.
+		    void update(double dt);
 
-		// Position...
-		Vector2D position = Vector2D(0.0,0.0);
-		// ...rotation...
-		double rotation = 0;
-		// ...and color of our sprite.
-		Color color = Color(1.0,1.0,1.0,1.0);
+		    // Position...
+		    Vector2D position;
+		    // ...rotation...
+		    double rotation;
+		    // ...and color of our sprite.
+		    Color color;
 
-		// Width and height.
-		class {
-			Sprite *parent; //C++ sux.
-			public:
-			friend class pip::Sprite;
-		    operator unsigned int () const { return parent->myTextures[parent->animation].frames[parent->frame]->width; }
-		} width; // Magic inside.
-		class {
-			Sprite *parent;
-			public:
-			friend class pip::Sprite;
-		    operator unsigned int () const { return parent->myTextures[parent->animation].frames[parent->frame]->height; }
-		} height;
+		    // Width and height.
+		    Property<int> width;
+            Property<int> height;
 
-		// Current animation's name ("idle" by default).
-		class {
-			Sprite *parent;
-			string value = "idle";
-			public:
-			friend class pip::Sprite;
-			string & operator = (const string &i)
-			{
-				parent->frame = 0;
-				if(parent->myTextures.count(i) == 0) return value = "idle";
-				return value = i;
-			}
-		    operator string () const { return this->value; }
-		} animation;
+            // current animation name
+		    Property<string> animation;
 
-		// Current animation's frame.
-		unsigned int frame = 0;
-		// Speed of our animation.
-		double fps = 1.0;
-		// Is animation paused?
-		bool paused = false;
+		    // Current animation's frame.
+		    unsigned int frame;
+		    // Multiplier of animation speed.
+		    double fpsMultiplier;
+		    // Is animation paused?
+		    bool paused;
 
-		Shader mutable *shader = 0;
+		    Shader mutable *shader;
+	    private:
+		    // Some private goodies.
 
-	private:
-		// Some private goodies.
+		    //Sprite's renderer.
+		    Renderer *renderer;
 
-		//Sprite's renderer.
-		Renderer *renderer;
+		    // Make our texture unique.
+		    inline void unique(unsigned int renderedFrame = 0, const string &animation = "idle");
 
-		// Make our texture unique.
-		inline void unique(unsigned int renderedFrame = 0, const string &animation = "idle");
+            //Evil implementation detail, don't touch.
+		    struct AnimInfo
+		    {
+			    vector<pip::Texture*> frames;
+			    unsigned int framesCount;
 
-		//Evil implementation detail, don't touch.
-		struct AnimInfo
-		{
-			vector<pip::Texture*> frames;
-			unsigned int framesCount = 0;
-		};
-		// Don't touch too.
-		map<string, AnimInfo> myTextures;
+			    bool looped;
+			    int loopStart;
+			    int fps;
 
-		double totalElapsed = 1.0;
+                AnimInfo() : looped(false), loopStart(0), fps(10), framesCount(0) { }
+		    };
+
+		    // Don't touch too.
+		    map<string, AnimInfo> animations;
+
+		    double totalElapsed;
+
+        public:
+            AnimInfo* operator[] (const string &name)
+            {
+                return &this->animations[name];
+            }
 	};
 
 	inline const Rectangle& getRectangle(const Sprite &sprite)
@@ -110,14 +101,17 @@ namespace pip
 			&& a.start.y + (a.height) > b.start.y
 			&& a.start.y < b.start.y + (b.height));
 	}
+
 	inline bool isRectangleCollide(Sprite &a, Sprite &b)
 	{
 	   return isRectangleCollide(getRectangle(a), getRectangle(b));
 	}
+
 	inline bool isRectangleCollide(Rectangle a, Sprite &b)
 	{
 		return isRectangleCollide(a, getRectangle(b));
 	}
+
 	inline bool isRectangleCollide(Sprite &a, Rectangle b)
 	{
 		return isRectangleCollide(getRectangle(a), b);

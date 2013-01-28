@@ -7,6 +7,8 @@ std::map<pip::string,pip::Texture*> pip::Texture::textureMap;
 pip::Texture::Texture(Renderer *renderer)
 {
 	this->renderer = renderer;
+
+	this->shared = true;
 }
 
 pip::Texture::~Texture()
@@ -29,6 +31,7 @@ pip::Texture* pip::Texture::get(const std::string &name, Renderer *renderer)
 		textureMap[name]->load(name);
 		textureMap[name]->shared = true;
 	}
+
 	if(!textureMap[name]->id)
 	{
 		throw EngineException("Can't load texture '" + name + "'!"); // TODO Should it be checked when loading?

@@ -10,17 +10,21 @@ namespace pip
 	{
 	public:
 		InterpreterException(const string &nval) {val = nval;}
+
 		const char * what () const throw ()
 		{
 			return STR_CCHR(val);
 		}
+
 	private:
 		string val;
 	};
+
 	class EngineException : public std::exception
 	{
 	public:
 		EngineException(const string &nval) {val = nval;}
+
 		const char * what () const throw ()
 		{
 			return STR_CCHR(val);

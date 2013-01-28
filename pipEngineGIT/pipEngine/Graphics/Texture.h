@@ -24,10 +24,10 @@ namespace pip
 		static Texture* get(const string &name, Renderer *renderer);
 
 		unsigned int id;
-		int width, height, nearestWidth, nearestHeight, channels = 0;
+		int width, height, nearestWidth, nearestHeight, channels;
 		pip::Renderer mutable *renderer;
 	private:
-		bool shared = false;
+		bool shared;
 		string name;
 		// Awful static map which is our texture manager. Pure evil.
 		static std::map<string,pip::Texture*> textureMap;

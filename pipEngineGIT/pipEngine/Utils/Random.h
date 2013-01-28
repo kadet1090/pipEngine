@@ -25,10 +25,12 @@ namespace pip
 		{
 			return ((T)(rand()%(int)(max-min))+min);
 		}
+
 		inline float randrange(float min, float max)
 		{
 			return (((float)rand()/(float)RAND_MAX)*(max-min) + min);
 		}
+
 		inline double randrange(double min, double max)
 		{
 			return (((double)rand()/(double)RAND_MAX)*(max-min) + min);

@@ -1,4 +1,4 @@
-#if 0
+#if 1
 #include "Graphics/Renderer.h"
 #include "Graphics/Sprite.h"
 #include "Graphics/Shader.h"
@@ -42,6 +42,7 @@ int main()
 
     pip::Sprite *sprite = gc_new pip::Sprite("sprite_up1.png", renderer, shader);
     sprite->load("sprite_up2.png");
+    sprite->load("sprite_up3.png");
 
     sprite->position = pip::Vector2D(300.0,300.0);
     //shader->bind();
@@ -156,7 +157,7 @@ int main()
 }
 
 #endif
-
+/*
 #include "Utils/Interpreter.h"
 
 int main()
@@ -181,3 +182,4 @@ int main()
 	return 0;
 }
 
+*/

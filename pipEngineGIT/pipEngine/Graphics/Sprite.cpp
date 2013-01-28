@@ -2,14 +2,32 @@
 
 pip::Sprite::Sprite(const string &name, Renderer *renderer, Shader *shader)
 {
-	// C++ doesn't let us to use 'this' pointer of outer class in inner class...
-	this->width.parent = this;
-	this->height.parent = this;
-	this->animation.parent = this;
-
 	this->load(name);
 	this->renderer = renderer;
 	this->shader = shader;
+
+	this->totalElapsed = 0.0;
+
+	this->color = Color(1.0,1.0,1.0,1.0);
+	this->rotation = 0;
+	this->position = Vector2D(0.0,0.0);
+
+    this->width.get     = [this]()->int { return this->animations[animation].frames[this->frame]->width; };
+    this->height.get    = [this]()->int { return this->animations[animation].frames[this->frame]->height; };
+
+    this->animation.set = [this](string value) {
+        // reset animation-dependent data
+		this->frame = 0;
+		this->totalElapsed = 0;
+
+		// set new animation
+		if(this->animations.count(value) == 0)
+			this->animation.value = "idle";
+        else
+		    this->animation.value = value;
+    };
+
+    this->animation = "idle";
 }
 
 pip::Sprite::~Sprite()
@@ -20,70 +38,88 @@ pip::Sprite::~Sprite()
 void pip::Sprite::load(const string &name, const string &animation)
 {
 	std::cout << "Name: " << name << std::endl;
-	this->myTextures[animation].frames.push_back(Texture::get(name, this->renderer));
-	this->myTextures[animation].framesCount++;
+	this->animations[animation].frames.push_back(Texture::get(name, this->renderer));
+	this->animations[animation].framesCount++;
 }
 
 void pip::Sprite::clear()
 {
-	this->totalElapsed = 1.0;
+	this->totalElapsed = 0.0;
 	this->frame = 0;
-	this->myTextures.clear();
+	this->animations.clear();
 }
 
 void pip::Sprite::setPixel(const Vector2D &position, const Color &color, unsigned int renderedFrame, const string &animation)
 {
 	this->unique(renderedFrame);
-	//pip::this->renderer->setPixel(*this->myTextures[animation].frames[renderedFrame], position, color);
+	//pip::this->renderer->setPixel(*this->animations[animation].frames[renderedFrame], position, color);
 }
 
 void pip::Sprite::render()
 {
-	if (this->myTextures[animation].framesCount)
+	if (this->animations[animation].framesCount)
 	{
-		pip::Texture *currentFrame = this->myTextures[this->animation].frames[this->frame];
+		pip::Texture *currentFrame = this->animations[this->animation].frames[this->frame];
 
-		this->shader->bind();
-		this->shader->setSampler("frameSampler", currentFrame);
+		if(this->shader) // if sprite is rendered by shader
+		{
+			this->shader->bind();
+			this->shader->setSampler("frameSampler", currentFrame);
+		}
 
 		//currentFrame->bind();
 		this->renderer->setColor(this->color);
-		this->renderer->drawQuad(currentFrame->nearestWidth,currentFrame->nearestHeight,
-				currentFrame->width,currentFrame->height,
-				Vector2D(0,0),Vector2D(currentFrame->width,currentFrame->height),
-				this->position,this->rotation);
+
+		this->renderer->drawQuad(
+			currentFrame->nearestWidth, currentFrame->nearestHeight,
+			currentFrame->width, currentFrame->height,
+			Vector2D(0,0), Vector2D(currentFrame->width, currentFrame->height),
+			this->position, this->rotation
+		);
 	}
 }
 
+// TODO: add fps multiplier
 void pip::Sprite::update(double dt)
 {
 	//std::cout << "FRAME:" << this->frame << std::endl;
 	//std::cout << "FRAMESCOUNT:" << this->framesCount << std::endl;
+
 	if (this->paused)
 	        return;
-	if (this->myTextures[animation].framesCount)
+
+	pip::Sprite::AnimInfo* current = &this->animations[animation];
+
+	if (current->framesCount)
 	{
 	    this->totalElapsed += dt;
-	    if (this->totalElapsed > 1.0 / this->fps)
+
+	    if (this->totalElapsed > 1.0 / current->fps)
 	    {
-	    	std::cout << "Frame: " << this->frame << std::endl;
 	        this->frame++;
-	        if (this->frame  >= this->myTextures[animation].framesCount)
-	        	this->frame = 0;
-	        this->totalElapsed -= 1.0 / this->fps;
-	        //std::cout << "Frame: " << this->frame << std::endl;
+
+			if (this->frame >= current->framesCount && current->looped)
+				this->frame = current->loopStart;
+
+			else if (this->frame >= current->framesCount && !current->looped)
+            {
+				this->paused = true;
+                this->frame--;
+            }
+
+	        this->totalElapsed -= 1.0 / current->fps;
 	    }
 	}
 }
 
 void pip::Sprite::unique(unsigned int renderedFrame, const string &animation)
 {
-	if(this->myTextures[animation].frames[renderedFrame]->shared)
+	if(this->animations[animation].frames[renderedFrame]->shared)
 	{
-		string temp = this->myTextures[animation].frames[renderedFrame]->name;
+		string temp = this->animations[animation].frames[renderedFrame]->name;
 
-		this->myTextures[animation].frames[renderedFrame] = gc_new pip::Texture(this->renderer);
-		this->myTextures[animation].frames[renderedFrame]->name = temp;
-		this->myTextures[animation].frames[renderedFrame]->load(this->myTextures[animation].frames[renderedFrame]->name);
+		this->animations[animation].frames[renderedFrame] = gc_new pip::Texture(this->renderer);
+		this->animations[animation].frames[renderedFrame]->name = temp;
+		this->animations[animation].frames[renderedFrame]->load(this->animations[animation].frames[renderedFrame]->name);
 	}
 }

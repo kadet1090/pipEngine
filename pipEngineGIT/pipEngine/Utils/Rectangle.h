@@ -16,10 +16,10 @@ namespace pip
 		//OH MY GOSH THEY USED MACRO!!!1!@1!oneoneone!@1!
 		#define INIT_PROPS \
 			this->width.get = [&](){return abs(this->end.x-this->start.x);}; \
-			this->width.set = [&](unsigned int width){/*throw PropertyException();*/}; \
+			this->width.set = [&](double width){/*throw PropertyException();*/}; \
 			 \
 			this->height.get = [&](){return abs(this->end.y-this->start.y);}; \
-			this->height.set = [&](unsigned int height){/*throw PropertyException();*/};
+			this->height.set = [&](double height){/*throw PropertyException();*/};
 
 
 		Rectangle(Vector2D start, Vector2D end) : width(0), height(0)

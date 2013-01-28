@@ -3,58 +3,108 @@
 
 #include <functional>
 
-#include "../Default.h"
-
-namespace pip
-{
-	///Because we all hate accessors and mutators.
-	template <class T>
-	class Property
-	{
-	public:
-		Property(T val)
-		{
-			this->val = val;
-			this->get = [&](){return this->val;};
-			this->set = [&](T val){this->val = val;};
-		}
-		~Property() {}
-
-		Property& operator=(const Property &rhs)
-		{
-			if (this != &rhs)
-			{
-				this->set(rhs.get());
-			}
-			return *this;
-		}
-		Property& operator=(const T &rhs)
-		{
-			this->set(rhs);
-			return *this;
-		}
-		operator T() const {return this->get();}
-
-
-		std::function<T()> get;
-		std::function<void(T)> set;
-		T val;
-	};
-
-}
-
-//How to use magic:
-/*
- 	Property<int> prop(0);
-	prop.set = [&prop](int val){prop.val = val*2;};
-	prop = 10;
-	std::cout << prop << std::endl; //Prints 20
-
-	prop.get = [&prop](){return prop.val/2.0f;};
-	std::cout << prop << std::endl; //Prints 10
-
-	Property<int> prop2 = 20 + prop;
-	std::cout << prop2 << std::endl; //Prints 30
+template <typename T>
+/**
+ * Property class for PipEngine.
+ * Example:
+ * 
+ * Property<int> prop = Property<int>(
+ *     [&prop]()->int { return prop.value * 2; },
+ *     [&prop](int value) { prop.value = value * -2; }
+ * );
+ * 
+ * prop = -2;
+ * std::cout << prop << std::endl; // prints 8
+ *
+ * prop = 2;
+ * std::cout << prop << std::endl; // prints -8
+ *
+ * prop.get = [&prop]()->int { return prop.value / 2; };
+ * std::cout << prop << std::endl; // prints -2
  */
+struct Property 
+{
+    /**
+    * Stores current property value.
+    */
+    T value;
 
+    /**
+    * Function that returns property value.
+    */
+    std::function<T()> get;
+
+    /**
+    * Function that sets property to specified value.
+    */
+    std::function<void(T value)> set;
+ 
+    /**
+    * Default constructor for property.
+    */
+    Property()
+    {
+	    this->get = [this]()->T { return this->value; };
+	    this->set = [this](T value) { this->value = value; };
+    }
+
+    /**
+    * Constructor that defines set and get methods.
+    */
+    Property(
+        std::function<T()> get,
+        std::function<void(T)> set  
+    ) { 
+	    this->get = get;
+	    this->set = set;
+    }
+
+    /**
+     * Constructor that sets property to specified value using default set method.
+     */
+
+    Property(T value) : Property() 
+    { 
+        this->set(value);
+    }
+
+    /**
+     * Constructor that sets property to speciified value using default set method and defines new get method.
+     */
+    Property(T value, std::function<T()> get) : Property(get)
+    { 
+        this->set(value);
+    }
+
+    /**
+     * Constructor that sets property to given value using specified set method and defines set and get methods.
+     */
+    Property(T value, std::function<T()> get, std::function<void(T)> set) : Property(get, set)
+    { 
+        this->set(value);
+    }
+ 
+    /**
+     * Sets property value.
+     */
+    Property& operator = (const T &value) 
+    {
+	    this->set(value);
+        return *this;
+    }
+
+    /**
+     * Sets property value.
+     */
+    Property& operator = (const Property<T> &value) 
+    {
+	    this->set(value.get());
+        return *this;
+    }
+ 
+    /**
+     * Gets property value.
+     */
+    operator T() const { return this->get(); }
+};
 #endif
