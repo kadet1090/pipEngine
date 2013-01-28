@@ -43,6 +43,7 @@ int main()
     pip::Sprite *sprite = gc_new pip::Sprite("sprite_up1.png", renderer, shader);
     sprite->load("sprite_up2.png");
     sprite->load("sprite_up3.png");
+    sprite->rotationPoint = pip::Vector2D(27.0, 15.0);
 
     sprite->position = pip::Vector2D(300.0,300.0);
     //shader->bind();
@@ -108,6 +109,7 @@ int main()
     		sprite->update(App.GetFrameTime());
                 //sprite2.update(App.GetFrameTime());
                 //std::cout << "X:" << posX << " Y:" << posY << std::endl;
+            sprite->rotation += App.GetFrameTime() * 30;
 
         	renderer->begin();
         	    //Entity::luaMachine.execute("print(coroutine.status(co1))");

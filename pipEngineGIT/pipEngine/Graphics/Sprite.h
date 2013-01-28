@@ -35,8 +35,12 @@ namespace pip
 
 		    // Position...
 		    Vector2D position;
-		    // ...rotation...
+
+		    // ...rotation angle and...
 		    double rotation;
+            // ...point...
+            Vector2D rotationPoint;
+
 		    // ...and color of our sprite.
 		    Color color;
 

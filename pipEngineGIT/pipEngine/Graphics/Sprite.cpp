@@ -9,8 +9,11 @@ pip::Sprite::Sprite(const string &name, Renderer *renderer, Shader *shader)
 	this->totalElapsed = 0.0;
 
 	this->color = Color(1.0,1.0,1.0,1.0);
-	this->rotation = 0;
-	this->position = Vector2D(0.0,0.0);
+	
+    this->rotation = 0;
+    this->rotationPoint = Vector2D(0.0, 0.0);
+
+	this->position = Vector2D(0.0, 0.0);
 
     this->width.get     = [this]()->int { return this->animations[animation].frames[this->frame]->width; };
     this->height.get    = [this]()->int { return this->animations[animation].frames[this->frame]->height; };
@@ -74,7 +77,7 @@ void pip::Sprite::render()
 			currentFrame->nearestWidth, currentFrame->nearestHeight,
 			currentFrame->width, currentFrame->height,
 			Vector2D(0,0), Vector2D(currentFrame->width, currentFrame->height),
-			this->position, this->rotation
+            this->position, this->rotation, this->rotationPoint
 		);
 	}
 }

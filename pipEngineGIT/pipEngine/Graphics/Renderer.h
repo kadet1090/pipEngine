@@ -69,7 +69,7 @@ namespace pip
 			void setTarget();
 			void setTarget(Texture *texture);
 
-			void drawQuad(unsigned int width, unsigned int height, unsigned int textureWidth, unsigned int textureHeight, Vector2D textureStart, Vector2D textureEnd, Vector2D position, float angle) const;
+			void drawQuad(unsigned int width, unsigned int height, unsigned int textureWidth, unsigned int textureHeight, Vector2D textureStart, Vector2D textureEnd, Vector2D position, float angle, Vector2D axis = Vector2D(0.0, 0.0)) const;
 			void drawText(Vector2D position, const string &text, const string &name, float size = 12) const;
 
 		private:

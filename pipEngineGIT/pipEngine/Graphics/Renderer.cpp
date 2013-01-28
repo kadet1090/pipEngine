@@ -245,11 +245,14 @@ void pip::Renderer::setTarget()
 }
 
 
-void pip::Renderer::drawQuad(unsigned int width, unsigned int height, unsigned int textureWidth, unsigned int textureHeight, Vector2D textureStart, Vector2D textureEnd, Vector2D position, float angle)  const
+void pip::Renderer::drawQuad(unsigned int width, unsigned int height,
+                             unsigned int textureWidth, unsigned int textureHeight, 
+                             Vector2D textureStart, Vector2D textureEnd,
+                             Vector2D position, float angle, Vector2D axis) const
 {
 	glPushMatrix();
 	glTranslatef(position.x, position.y, 0.0f);
-	glRotatef(angle,0.0f,0.0f,1.0f);
+	glRotatef(angle, 0.0f, 0.0f, 1.0f);
 	glScalef((float)width, -(float)height, 0.0f);
 
 	if(GLEE_ARB_vertex_buffer_object)
