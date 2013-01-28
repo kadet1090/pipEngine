@@ -6,8 +6,51 @@
 # Compiled Dynamic libraries
 *.so
 *.dylib
+*.dll
 
 # Compiled Static libraries
 *.lai
 *.la
 *.a
+*.lib
+
+# Ignore files build by Visual Studio
+*.user
+*.aps
+*.pch
+*.vspscc
+*_i.c
+*_p.c
+*.ncb
+*.suo
+*.bak
+*.cache
+*.ilk
+*.log
+[Bb]in
+[Dd]ebug*/
+*.sbr
+obj/
+[Rr]elease*/
+_ReSharper*/
+
+# ignore visual studio projects
+Pip Engine.*
+
+# models project
+PipEngine Models
+
+# ignore thumbnails created by windows
+Thumbs.db
+*.obj
+*.exe
+*.pdb
+*.tlb
+*.tlh
+[Tt]est[Rr]esult*
+
+# other files
+*.png
+*.vert
+*.frag
+*.ttf
